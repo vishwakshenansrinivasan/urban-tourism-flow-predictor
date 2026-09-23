@@ -69,13 +69,13 @@ export default function ModelAccuracyView({ onNavigateToMap }) {
             <span className="px-2.5 py-0.5 rounded-full text-[11px] font-mono font-semibold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
               PRODUCTION EVALUATION
             </span>
-            <span className="text-xs text-slate-400 font-mono">v2.4 (XGBoost + TreeSHAP)</span>
+            <span className="text-xs text-slate-400 font-mono">v3.0 (Chennai Urban Grid)</span>
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
             Model Accuracy & Diagnostic Performance
           </h1>
           <p className="text-xs text-slate-400 mt-1 max-w-2xl">
-            Empirical evaluation against 90 days of hourly ground truth across 12 San Francisco GTFS transit hubs and tourism landmarks.
+            Empirical evaluation against 180 days of hourly ground truth across 12 Chennai CMRL Metro, Suburban Rail, and Tourism hubs.
           </p>
         </div>
 

@@ -118,25 +118,25 @@ export default function NodeDrawer({
     return 'bg-rose-500/20 text-rose-300 border-rose-500/40 animate-pulse';
   };
 
-  // Mitigation plans based on risk and node category
+  // Mitigation plans based on risk and node category in Chennai
   const getMitigationStrategies = () => {
     if (currentScore >= 80) {
       return [
-        { title: 'Emergency Transit Headway Surge', desc: 'Deploy 4 additional auxiliary Muni/BART shuttle runs to clear platform density.', level: 'Critical' },
-        { title: 'Dynamic Pedestrian Diversion Wayfinding', desc: 'Activate digital signage at feeder intersections directing tourists to alternate corridors.', level: 'Critical' },
-        { title: 'Station Crowd Marshalling', desc: 'Stagger turnstile intake to maintain safe concourse capacity limits.', level: 'High' }
+        { title: 'Emergency CMRL Metro & EMU Surge Dispatch', desc: 'Deploy 4 additional auxiliary CMRL Metro train runs & suburban EMU rakes to clear platform crowd density.', level: 'Critical' },
+        { title: 'Pedestrian Skywalk & Road Diversion', desc: 'Activate MTC traffic police diversion at feeder junctions and open full pedestrian skywalk capacity.', level: 'Critical' },
+        { title: 'Terminal Gate & Concourse Marshalling', desc: 'Stagger turnstile automatic fare collection intake to maintain safe platform capacity limits.', level: 'High' }
       ];
     }
     if (currentScore >= 60) {
       return [
-        { title: 'Dynamic Transit Frequency Adjustment', desc: 'Shorten Muni headway from 12 mins to 7 mins to absorb incoming tourist surge.', level: 'High' },
-        { title: 'Mobile Tour Bus Staging Regulation', desc: 'Hold tour buses at outer perimeter staging zones to prevent curbside blockage.', level: 'Moderate' },
-        { title: 'Real-time Flow Notifications', desc: 'Broadcast high-density advisory to municipal transit mobile apps.', level: 'Informational' }
+        { title: 'Dynamic MTC Feeder Frequency Adjustment', desc: 'Shorten MTC feeder bus headway from 15 mins to 8 mins to absorb incoming weekend beach/shopping surge.', level: 'High' },
+        { title: 'Auto-Rickshaw & Cab Staging Regulation', desc: 'Regulate designated outer perimeter pickup zones to prevent arterial road blockages.', level: 'Moderate' },
+        { title: 'Real-time Flow Advisory', desc: 'Broadcast live crowd density advisory to Chennai Transit & CMRL mobile passenger apps.', level: 'Informational' }
       ];
     }
     return [
-      { title: 'Standard Schedule Operation', desc: 'Current flow is well within nominal capacity baseline. No intervention required.', level: 'Optimal' },
-      { title: 'Proactive Sensor Telemetry Check', desc: 'All turnstiles and GTFS real-time feeds operating with high fidelity.', level: 'Optimal' }
+      { title: 'Standard Transit Operation', desc: 'Current pedestrian and transit volume is well within nominal capacity baseline. No intervention needed.', level: 'Optimal' },
+      { title: 'Continuous Sensor Telemetry Active', desc: 'All turnstiles, MTC GPS feeds, and CMRL passenger sensors operating with normal latency.', level: 'Optimal' }
     ];
   };
 
@@ -182,10 +182,10 @@ export default function NodeDrawer({
         <div className="glass-card rounded-xl p-2.5">
           <div className="flex items-center gap-1.5 text-slate-400 mb-1">
             <Train className="w-3.5 h-3.5 text-indigo-400" />
-            <span>GTFS Transit</span>
+            <span>Transit Frequency</span>
           </div>
           <div className="text-base lg:text-lg font-black text-white">{currentFc.scheduled_trips ?? 14} <span className="text-xs font-normal text-slate-400">trips/h</span></div>
-          <div className="text-[10px] text-slate-400 font-mono">Scheduled Muni/BART</div>
+          <div className="text-[10px] text-slate-400 font-mono">CMRL / EMU / MTC</div>
         </div>
 
         <div className="glass-card rounded-xl p-2.5">
@@ -193,8 +193,8 @@ export default function NodeDrawer({
             <CloudSun className="w-3.5 h-3.5 text-amber-400" />
             <span>Weather</span>
           </div>
-          <div className="text-base lg:text-lg font-black text-white">{currentFc.temp_c ?? 16}°C</div>
-          <div className="text-[10px] text-slate-400 font-mono truncate">{currentFc.weather_condition ?? 'Clear'}</div>
+          <div className="text-base lg:text-lg font-black text-white">{currentFc.temp_c ?? 30}°C</div>
+          <div className="text-[10px] text-slate-400 font-mono truncate">{currentFc.weather_condition ?? 'Sunny & Warm'}</div>
         </div>
       </div>
 

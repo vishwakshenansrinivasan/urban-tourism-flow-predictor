@@ -14,7 +14,7 @@ export default function App() {
   const [summary, setSummary] = useState(null);
   const [benchmarks, setBenchmarks] = useState([]);
   const [selectedHour, setSelectedHour] = useState(1);
-  const [selectedNodeId, setSelectedNodeId] = useState('SF_POWELL_ST');
+  const [selectedNodeId, setSelectedNodeId] = useState('MAA_CENTRAL_STATION');
   const [currentView, setCurrentView] = useState('map'); // 'map' | 'accuracy' | 'matrix'
   const [isBenchmarksOpen, setIsBenchmarksOpen] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -84,7 +84,7 @@ export default function App() {
           <div className="absolute font-bold text-xs text-cyan-400">PULSE</div>
         </div>
         <div className="text-sm font-medium text-slate-300">
-          Loading 12 San Francisco Hubs & XGBoost Telemetry...
+          Loading 12 Chennai Hubs & CMRL Telemetry...
         </div>
       </div>
     );

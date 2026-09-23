@@ -14,9 +14,9 @@ L.Icon.Default.mergeOptions({
   shadowUrl: markerShadow
 });
 
-// San Francisco default center & zoom
-const SF_CENTER = [37.7820, -122.4220];
-const SF_ZOOM = 13;
+// Chennai Metropolitan Area default center & zoom
+const CHENNAI_CENTER = [13.0450, 80.2450];
+const CHENNAI_ZOOM = 12.5;
 
 export default function GeospatialMap({
   nodes = [],
@@ -44,8 +44,8 @@ export default function GeospatialMap({
     if (!mapContainerRef.current || mapInstanceRef.current) return;
 
     const map = L.map(mapContainerRef.current, {
-      center: SF_CENTER,
-      zoom: SF_ZOOM,
+      center: CHENNAI_CENTER,
+      zoom: CHENNAI_ZOOM,
       zoomControl: false, // Custom placed zoom control
       attributionControl: true
     });

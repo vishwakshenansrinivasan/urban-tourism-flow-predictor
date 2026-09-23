@@ -81,7 +81,7 @@ export default function NodeMatrixView({
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-6">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-            <span>San Francisco Landmark & Transit Hub Network</span>
+            <span>Chennai Landmark & Transit Hub Network</span>
             <span className="text-xs px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-mono border border-indigo-500/30">
               {nodes.length} Hubs Active
             </span>

@@ -38,12 +38,12 @@ export default function Header({
             <span className="text-sm font-bold tracking-tight text-white flex items-center gap-1.5">
               <span>URBAN FLOW</span>
               <span className="text-[10px] px-2 py-0.2 rounded-full bg-cyan-500/20 text-cyan-300 font-mono border border-cyan-500/30">
-                SF PREDICTOR
+                CHENNAI PREDICTOR
               </span>
             </span>
           </div>
           <p className="text-[11px] text-slate-400 hidden sm:block">
-            GTFS Spatio-Temporal Graph & Tourist Congestion Forecaster
+            CMRL Metro, Suburban Rail & Tourism Spatio-Temporal Forecaster
           </p>
         </div>
       </div>
@@ -115,7 +115,7 @@ export default function Header({
           title="Quick Model Benchmarks"
         >
           <Award className="w-3.5 h-3.5 text-indigo-400" />
-          <span>R² 0.928</span>
+          <span>R² 0.961</span>
         </button>
       </div>
     </header>

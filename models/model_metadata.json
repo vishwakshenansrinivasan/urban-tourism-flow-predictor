@@ -1,6 +1,6 @@
 {
   "model_name": "XGBoost_Congestion_Predictor",
-  "trained_at": "2026-09-23T14:54:49.367003+00:00",
+  "trained_at": "2026-09-23T15:18:24.264938+00:00",
   "n_features": 33,
   "features": [
     "hour_sin",
@@ -39,11 +39,11 @@
   ],
   "target": "congestion_score",
   "metrics": {
-    "test_mae": 3.5296067979409966,
-    "test_rmse": 4.830783740508942,
-    "test_r2": 0.9604699543445109,
-    "baseline_mae": 6.008884031884804,
-    "baseline_rmse": 8.399381244888906,
-    "baseline_r2": 0.8804948249060498
+    "test_mae": 2.6287907805409705,
+    "test_rmse": 3.880173815812233,
+    "test_r2": 0.9822721529416041,
+    "baseline_mae": 4.851632810491129,
+    "baseline_rmse": 7.185822875534857,
+    "baseline_r2": 0.9391995699557861
   }
 }

@@ -123,7 +123,7 @@ export default function ForecastSlider({
           )}
           <div>
             <div className="font-bold text-slate-200">{tempC}°C • {weatherCond}</div>
-            <div className="text-[10px] text-slate-400 font-mono">Coastal SF Weather</div>
+            <div className="text-[10px] text-slate-400 font-mono">Chennai Tropical Weather</div>
           </div>
         </div>
       </div>

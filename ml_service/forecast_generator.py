@@ -29,7 +29,7 @@ def generate_forecasts(horizon_hours: int = FORECAST_HORIZON_HOURS) -> list:
     """
     explainer, model = get_explainer()
 
-    now = datetime.now(timezone.utc).replace(minute=0, second=0, microsecond=0)
+    now = datetime.now().replace(minute=0, second=0, microsecond=0)
     forecast_end = now + timedelta(hours=horizon_hours)
 
     print(f"[Forecast] Generating {horizon_hours}-hour forward predictions ({now.strftime('%Y-%m-%d %H:00')} to {forecast_end.strftime('%Y-%m-%d %H:00')})...")
@@ -82,12 +82,12 @@ def generate_forecasts(horizon_hours: int = FORECAST_HORIZON_HOURS) -> list:
 
             # Weather forecast for step
             w_row = weather_map.get(target_ts, {})
-            temp_c = float(w_row.get("temp_c", 15.0))
-            humidity_pct = int(w_row.get("humidity_pct", 70))
+            temp_c = float(w_row.get("temp_c", 30.5))
+            humidity_pct = int(w_row.get("humidity_pct", 75))
             precip_mm = float(w_row.get("precip_mm", 0.0))
-            wind_speed = float(w_row.get("wind_speed_kmh", 12.0))
+            wind_speed = float(w_row.get("wind_speed_kmh", 14.0))
             is_rain = int(w_row.get("is_rain", 0))
-            condition = str(w_row.get("weather_condition", "Clear"))
+            condition = str(w_row.get("weather_condition", "Sunny & Warm"))
 
             # Lags from rolling buffer
             lag_1 = recent_congestion_scores[-1]

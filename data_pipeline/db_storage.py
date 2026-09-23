@@ -200,10 +200,19 @@ def _init_postgres():
     conn.close()
 
 def seed_nodes():
-    """Seeds the 7 San Francisco landmark nodes if not already present."""
+    """Seeds the 12 Chennai landmark nodes and cleans up stale records."""
     is_postgres = DATABASE_URL.startswith("postgres")
     conn = get_connection()
     cursor = conn.cursor()
+
+    active_ids = [n["id"] for n in NODES]
+    if is_postgres:
+        cursor.execute("DELETE FROM nodes WHERE id NOT IN %s", (tuple(active_ids),))
+    else:
+        placeholders = ', '.join(['?'] * len(active_ids))
+        cursor.execute(f"DELETE FROM nodes WHERE id NOT IN ({placeholders})", active_ids)
+        cursor.execute(f"DELETE FROM hourly_metrics WHERE node_id NOT IN ({placeholders})", active_ids)
+        cursor.execute(f"DELETE FROM forecasts WHERE node_id NOT IN ({placeholders})", active_ids)
 
     for node in NODES:
         geojson_geom = {
