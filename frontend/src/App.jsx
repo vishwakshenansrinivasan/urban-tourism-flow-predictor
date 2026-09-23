@@ -3,6 +3,8 @@ import Header from './components/Header';
 import GeospatialMap from './components/GeospatialMap';
 import ForecastSlider from './components/ForecastSlider';
 import NodeDrawer from './components/NodeDrawer';
+import ModelAccuracyView from './components/ModelAccuracyView';
+import NodeMatrixView from './components/NodeMatrixView';
 import BenchmarksModal from './components/BenchmarksModal';
 import { fetchNodes, fetchForecast, fetchSummary, fetchBenchmarks } from './api';
 
@@ -13,6 +15,7 @@ export default function App() {
   const [benchmarks, setBenchmarks] = useState([]);
   const [selectedHour, setSelectedHour] = useState(1);
   const [selectedNodeId, setSelectedNodeId] = useState('SF_POWELL_ST');
+  const [currentView, setCurrentView] = useState('map'); // 'map' | 'accuracy' | 'matrix'
   const [isBenchmarksOpen, setIsBenchmarksOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -32,7 +35,7 @@ export default function App() {
         setSummary(summaryData);
         setBenchmarks(benchmarksData || []);
 
-        // Load 48h forecasts for all nodes
+        // Load 48h forecasts for all nodes in parallel
         const fcMap = {};
         if (nodesData && nodesData.length > 0) {
           await Promise.all(
@@ -62,11 +65,16 @@ export default function App() {
   const selectedNode = nodes.find((n) => n.id === selectedNodeId) || null;
   const selectedNodeForecastList = (selectedNodeId && nodeForecasts[selectedNodeId]) || [];
 
-  // Pick a sample forecast point for the weather capsule in the slider
+  // Pick a sample forecast point for the weather capsule in the scrubber
   const samplePoint =
     selectedNodeForecastList.find((f) => f.horizon_hour === selectedHour) ||
     Object.values(nodeForecasts)[0]?.find((f) => f.horizon_hour === selectedHour) ||
     null;
+
+  const handleSelectNodeAndNavigateToMap = (nodeId) => {
+    setSelectedNodeId(nodeId);
+    setCurrentView('map');
+  };
 
   if (loading) {
     return (
@@ -76,7 +84,7 @@ export default function App() {
           <div className="absolute font-bold text-xs text-cyan-400">PULSE</div>
         </div>
         <div className="text-sm font-medium text-slate-300">
-          Loading San Francisco GTFS Grid & XGBoost Predictions...
+          Loading 12 San Francisco Hubs & XGBoost Telemetry...
         </div>
       </div>
     );
@@ -90,7 +98,7 @@ export default function App() {
           <p className="text-xs text-slate-300 mb-4">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="px-4 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-bold transition"
+            className="px-4 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-bold transition cursor-pointer"
           >
             Retry Connection
           </button>
@@ -101,42 +109,65 @@ export default function App() {
 
   return (
     <div className="w-screen h-screen flex flex-col bg-slate-950 text-slate-100 overflow-hidden select-none">
-      {/* Top Navigation */}
+      {/* Top Header Navigation */}
       <Header
         summary={summary}
+        currentView={currentView}
+        onSelectView={setCurrentView}
         onOpenBenchmarks={() => setIsBenchmarksOpen(true)}
       />
 
-      {/* Main Geospatial Dashboard */}
-      <main className="relative flex-1 w-full overflow-hidden flex">
-        <GeospatialMap
+      {/* VIEW 1: Interactive Spatio-Temporal Geospatial Map */}
+      {currentView === 'map' && (
+        <div className="flex-1 w-full overflow-hidden flex flex-col">
+          <main className="relative flex-1 w-full overflow-hidden flex">
+            <GeospatialMap
+              nodes={nodes}
+              nodeForecasts={nodeForecasts}
+              selectedHour={selectedHour}
+              selectedNodeId={selectedNodeId}
+              onSelectNode={(id) => setSelectedNodeId(id)}
+            />
+
+            {/* Analytics & Explainability Drawer */}
+            {selectedNode && (
+              <NodeDrawer
+                node={selectedNode}
+                forecastList={selectedNodeForecastList}
+                selectedHour={selectedHour}
+                onClose={() => setSelectedNodeId(null)}
+              />
+            )}
+          </main>
+
+          {/* Interactive 48-Hour Forecast Timeline Scrubber */}
+          <ForecastSlider
+            selectedHour={selectedHour}
+            onChangeHour={setSelectedHour}
+            maxHours={48}
+            sampleForecastPoint={samplePoint}
+          />
+        </div>
+      )}
+
+      {/* VIEW 2: Dedicated Model Accuracy & Metric Scores Section */}
+      {currentView === 'accuracy' && (
+        <ModelAccuracyView
+          onNavigateToMap={() => setCurrentView('map')}
+        />
+      )}
+
+      {/* VIEW 3: All 12 Landmark & Transit Hubs Network Matrix */}
+      {currentView === 'matrix' && (
+        <NodeMatrixView
           nodes={nodes}
           nodeForecasts={nodeForecasts}
           selectedHour={selectedHour}
-          selectedNodeId={selectedNodeId}
-          onSelectNode={(id) => setSelectedNodeId(id)}
+          onSelectNodeAndSwitchToMap={handleSelectNodeAndNavigateToMap}
         />
+      )}
 
-        {/* Analytics Drawer per Node */}
-        {selectedNode && (
-          <NodeDrawer
-            node={selectedNode}
-            forecastList={selectedNodeForecastList}
-            selectedHour={selectedHour}
-            onClose={() => setSelectedNodeId(null)}
-          />
-        )}
-      </main>
-
-      {/* Interactive 48-Hour Forecast Timeline Scrubber */}
-      <ForecastSlider
-        selectedHour={selectedHour}
-        onChangeHour={setSelectedHour}
-        maxHours={48}
-        sampleForecastPoint={samplePoint}
-      />
-
-      {/* Model Benchmark Comparison Modal */}
+      {/* Quick Model Benchmark Comparison Modal */}
       <BenchmarksModal
         isOpen={isBenchmarksOpen}
         onClose={() => setIsBenchmarksOpen(false)}

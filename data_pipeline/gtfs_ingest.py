@@ -1,67 +1,36 @@
 """
-GTFS Ingestion Module for San Francisco Transit Grid.
+GTFS Ingestion Module for Chennai Metropolitan Transit Grid.
 Loads or generates standard GTFS static tables (stops, routes, trips, stop_times, calendar)
-and computes hourly scheduled transit frequency and departures per hub node.
+and computes hourly scheduled transit frequency and departures across Chennai nodes
+(CMRL Metro, Southern Railway Suburban EMU, MRTS, and MTC Bus routes).
 """
 import os
-import zipfile
-import urllib.request
 import pandas as pd
 import numpy as np
 from pathlib import Path
 from data_pipeline.config import RAW_GTFS_DIR, NODES
 
-# Public SFMTA GTFS feed URL
-SFMTA_GTFS_URL = "https://www.sfmta.com/getting-around/transit/developer-resources/gtfs/google_transit.zip"
-
 def ensure_gtfs_dataset():
     """
-    Ensures GTFS feed files are available in RAW_GTFS_DIR.
-    Attempts download from SFMTA public feed; if unavailable, generates a valid
-    standard GTFS static dataset representing SFMTA Muni Metro, F-Market,
-    Cable Cars, Central Subway, and bus lines servicing the 7 hub nodes.
+    Ensures GTFS feed files are available in RAW_GTFS_DIR for Chennai.
+    Generates standard GTFS static dataset representing CMRL Metro Blue & Green lines,
+    Suburban EMU lines, MRTS, and MTC arterial bus trunk routes servicing the 12 hub nodes.
     """
-    stops_file = RAW_GTFS_DIR / "stops.txt"
-    stop_times_file = RAW_GTFS_DIR / "stop_times.txt"
-    trips_file = RAW_GTFS_DIR / "trips.txt"
-    routes_file = RAW_GTFS_DIR / "routes.txt"
-    calendar_file = RAW_GTFS_DIR / "calendar.txt"
+    _generate_standard_chennai_gtfs_dataset()
 
-    if stops_file.exists() and stop_times_file.exists() and trips_file.exists():
-        return
-
-    # Attempt download from SFMTA
-    download_success = False
-    zip_path = RAW_GTFS_DIR / "google_transit.zip"
-    try:
-        req = urllib.request.Request(
-            SFMTA_GTFS_URL,
-            headers={"User-Agent": "UrbanFlowPredictor/1.0 (TransitResearch)"}
-        )
-        with urllib.request.urlopen(req, timeout=10) as response, open(zip_path, 'wb') as out_file:
-            out_file.write(response.read())
-        with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-            zip_ref.extractall(RAW_GTFS_DIR)
-        download_success = True
-        print("[GTFS] Successfully downloaded and extracted official SFMTA GTFS feed.")
-    except Exception as e:
-        print(f"[GTFS] Live GTFS download skipped or unreachable ({e}). Synthesizing realistic standard GTFS dataset.")
-
-    if not download_success:
-        _generate_standard_gtfs_dataset()
-
-def _generate_standard_gtfs_dataset():
-    """Generates standard GTFS static CSVs with realistic SFMTA schedules."""
+def _generate_standard_chennai_gtfs_dataset():
+    """Generates standard GTFS static CSVs with realistic Chennai schedules."""
     # 1. routes.txt
     routes = [
-        {"route_id": "MUNI_METRO_K_T", "route_short_name": "KT", "route_long_name": "Ingleside / Third St Light Rail", "route_type": 0},
-        {"route_id": "MUNI_METRO_N", "route_short_name": "N", "route_long_name": "Judah Light Rail", "route_type": 0},
-        {"route_id": "MUNI_F_MARKET", "route_short_name": "F", "route_long_name": "Market & Wharves Historic Streetcar", "route_type": 0},
-        {"route_id": "MUNI_CABLE_CAR_PH", "route_short_name": "PH", "route_long_name": "Powell / Hyde Cable Car", "route_type": 0},
-        {"route_id": "MUNI_CABLE_CAR_PM", "route_short_name": "PM", "route_long_name": "Powell / Mason Cable Car", "route_type": 0},
-        {"route_id": "MUNI_BUS_44", "route_short_name": "44", "route_long_name": "O'Shaughnessy / GGP Concourse", "route_type": 3},
-        {"route_id": "MUNI_T_CENTRAL", "route_short_name": "T", "route_long_name": "Central Subway (Rose Pak - Union Sq - Mission Bay)", "route_type": 0},
-        {"route_id": "BART_CORE", "route_short_name": "BART", "route_long_name": "Transbay & Market St Subway Trunk", "route_type": 1},
+        {"route_id": "CMRL_BLUE_LINE", "route_short_name": "CMRL-B", "route_long_name": "Blue Line (Wimco Nagar - Central - Guindy - Airport)", "route_type": 1},
+        {"route_id": "CMRL_GREEN_LINE", "route_short_name": "CMRL-G", "route_long_name": "Green Line (Chennai Central - CMBT Koyambedu - Alandur)", "route_type": 1},
+        {"route_id": "SR_SUBURBAN_SOUTH", "route_short_name": "EMU-S", "route_long_name": "Chennai Beach - Egmore - Mambalam - Tambaram EMU", "route_type": 2},
+        {"route_id": "SR_SUBURBAN_NORTH_WEST", "route_short_name": "EMU-NW", "route_long_name": "Chennai Central - Avadi - Arakkonam Suburban", "route_type": 2},
+        {"route_id": "MRTS_BEACH_VELACHERY", "route_short_name": "MRTS", "route_long_name": "Chennai Beach - Mylapore - Velachery Elevated Rail", "route_type": 2},
+        {"route_id": "MTC_TRUNK_29C", "route_short_name": "29C", "route_long_name": "Perambur - Central - Mylapore - Besant Nagar", "route_type": 3},
+        {"route_id": "MTC_TRUNK_21G", "route_short_name": "21G", "route_long_name": "Broadway - Marina Beach - Guindy - Tambaram", "route_type": 3},
+        {"route_id": "MTC_TRUNK_570", "route_short_name": "570", "route_long_name": "CMBT Koyambedu - Guindy - Velachery - OMR IT Corridor", "route_type": 3},
+        {"route_id": "MTC_FEEDER_11G", "route_short_name": "11G", "route_long_name": "Broadway - T. Nagar - Panagal Park Feeder", "route_type": 3},
     ]
     pd.DataFrame(routes).to_csv(RAW_GTFS_DIR / "routes.txt", index=False)
 
@@ -71,7 +40,7 @@ def _generate_standard_gtfs_dataset():
         for idx, stop_id in enumerate(node["gtfs_stop_ids"]):
             stops.append({
                 "stop_id": stop_id,
-                "stop_name": f"{node['name']} - Platform {idx + 1}",
+                "stop_name": f"{node['name']} - Gate/Platform {idx + 1}",
                 "stop_lat": node["lat"] + (idx * 0.0001),
                 "stop_lon": node["lng"] + (idx * 0.0001),
                 "zone_id": node["id"],
@@ -88,131 +57,130 @@ def _generate_standard_gtfs_dataset():
     pd.DataFrame(calendar).to_csv(RAW_GTFS_DIR / "calendar.txt", index=False)
 
     # 4. trips.txt and stop_times.txt
-    # Generate schedule across hours 05:00 to 24:00 with peak/off-peak/weekend frequencies
     trips = []
     stop_times = []
     trip_counter = 1000
 
-    # Node-to-route assignment
+    # Node-to-route assignment across Chennai
     node_routes = {
-        "SF_POWELL_ST": ["MUNI_METRO_K_T", "MUNI_METRO_N", "MUNI_CABLE_CAR_PH", "MUNI_CABLE_CAR_PM", "BART_CORE"],
-        "SF_FISHERMANS_WHARF": ["MUNI_F_MARKET", "MUNI_CABLE_CAR_PH", "MUNI_CABLE_CAR_PM"],
-        "SF_EMBARCADERO": ["MUNI_METRO_K_T", "MUNI_METRO_N", "MUNI_F_MARKET", "BART_CORE"],
-        "SF_UNION_SQUARE": ["MUNI_METRO_K_T", "MUNI_METRO_N", "MUNI_T_CENTRAL", "BART_CORE"],
-        "SF_MISSION_DOLORES": ["MUNI_METRO_N", "BART_CORE"],
-        "SF_GOLDEN_GATE_PARK": ["MUNI_METRO_N", "MUNI_BUS_44"],
-        "SF_CHINATOWN_GATE": ["MUNI_T_CENTRAL", "MUNI_CABLE_CAR_PM"]
+        "MAA_CENTRAL_STATION": ["CMRL_BLUE_LINE", "CMRL_GREEN_LINE", "SR_SUBURBAN_NORTH_WEST", "MTC_TRUNK_29C"],
+        "MAA_MARINA_BEACH": ["MTC_TRUNK_21G", "MTC_TRUNK_29C"],
+        "MAA_T_NAGAR_RANGANATHAN": ["SR_SUBURBAN_SOUTH", "MTC_FEEDER_11G", "MTC_TRUNK_29C"],
+        "MAA_MYLAPORE_KAPALEESHWARAR": ["MRTS_BEACH_VELACHERY", "MTC_TRUNK_29C", "MTC_TRUNK_21G"],
+        "MAA_EGMORE_STATION": ["SR_SUBURBAN_SOUTH", "CMRL_GREEN_LINE", "MTC_TRUNK_29C"],
+        "MAA_BESANT_NAGAR_ELLIOTS": ["MTC_TRUNK_29C", "MTC_TRUNK_21G"],
+        "MAA_GUINDY_INTERMODAL": ["CMRL_BLUE_LINE", "SR_SUBURBAN_SOUTH", "MTC_TRUNK_21G", "MTC_TRUNK_570"],
+        "MAA_AIRPORT_MEENAMBAKKAM": ["CMRL_BLUE_LINE", "SR_SUBURBAN_SOUTH"],
+        "MAA_KATHIPARA_JUNCTION": ["CMRL_BLUE_LINE", "CMRL_GREEN_LINE", "MTC_TRUNK_570"],
+        "MAA_SANTHOME_BASILICA": ["MTC_TRUNK_21G", "MRTS_BEACH_VELACHERY"],
+        "MAA_KOYAMBEDU_CMBT": ["CMRL_GREEN_LINE", "MTC_TRUNK_570"],
+        "MAA_PHOENIX_VELACHERY": ["MRTS_BEACH_VELACHERY", "MTC_TRUNK_570"]
     }
 
-    services = [("WD_SERVICE", 1.0), ("SAT_SERVICE", 0.75), ("SUN_SERVICE", 0.65)]
+    # Generate trips by hour
+    for service in calendar:
+        s_id = service["service_id"]
+        is_weekend = (s_id in ["SAT_SERVICE", "SUN_SERVICE"])
 
-    for service_id, serv_mult in services:
-        is_weekend = service_id in ["SAT_SERVICE", "SUN_SERVICE"]
         for hour in range(5, 24):
+            # Frequency modeling (trips per hour per route)
+            if not is_weekend:
+                if hour in [8, 9, 10, 17, 18, 19, 20]:  # Peak office rush
+                    freq = 8
+                elif hour in [11, 12, 13, 14, 15, 16]:  # Off-peak afternoon
+                    freq = 5
+                else:
+                    freq = 3
+            else:
+                if hour in [16, 17, 18, 19, 20, 21]:  # Weekend evening leisure surge
+                    freq = 7
+                elif hour in [11, 12, 13, 14, 15]:
+                    freq = 5
+                else:
+                    freq = 3
+
             for node in NODES:
                 n_id = node["id"]
-                stop_id = node["gtfs_stop_ids"][0]
-                routes_for_node = node_routes.get(n_id, ["MUNI_METRO_K_T"])
+                assigned_routes = node_routes.get(n_id, ["MTC_TRUNK_29C"])
+                stops_for_node = node["gtfs_stop_ids"]
 
-                # Base headway logic
-                if not is_weekend:
-                    if 7 <= hour <= 9 or 16 <= hour <= 18:
-                        trips_per_hour = int(22 * serv_mult)
-                    elif 10 <= hour <= 15:
-                        trips_per_hour = int(14 * serv_mult)
-                    else:
-                        trips_per_hour = int(8 * serv_mult)
-                else:
-                    # Weekend: tourist nodes peak 11am-18pm
-                    if "WHARF" in n_id or "PARK" in n_id or "CHINATOWN" in n_id:
-                        trips_per_hour = int(18 * serv_mult) if 11 <= hour <= 18 else int(10 * serv_mult)
-                    else:
-                        trips_per_hour = int(12 * serv_mult)
+                for r_id in assigned_routes:
+                    for _ in range(freq):
+                        trip_id = f"TRIP_{s_id}_{r_id}_{hour:02d}_{trip_counter}"
+                        trip_counter += 1
 
-                # Create trip records
-                for t_idx in range(trips_per_hour):
-                    trip_counter += 1
-                    t_id = f"T_{trip_counter}"
-                    r_id = routes_for_node[t_idx % len(routes_for_node)]
-                    trips.append({
-                        "route_id": r_id,
-                        "service_id": service_id,
-                        "trip_id": t_id,
-                        "trip_headsign": f"Inbound / Outbound {r_id}",
-                        "direction_id": t_idx % 2
-                    })
-                    minute = int((60 / max(1, trips_per_hour)) * t_idx)
-                    arr_time = f"{hour:02d}:{minute:02d}:00"
-                    stop_times.append({
-                        "trip_id": t_id,
-                        "arrival_time": arr_time,
-                        "departure_time": arr_time,
-                        "stop_id": stop_id,
-                        "stop_sequence": 1
-                    })
+                        trips.append({
+                            "route_id": r_id,
+                            "service_id": s_id,
+                            "trip_id": trip_id,
+                            "trip_headsign": f"{r_id} Service",
+                            "direction_id": 0
+                        })
+
+                        minute = np.random.randint(0, 60)
+                        arr_time = f"{hour:02d}:{minute:02d}:00"
+                        dep_time = f"{hour:02d}:{(minute + 1) % 60:02d}:00"
+
+                        stop_id = stops_for_node[0] if stops_for_node else "MAS01"
+                        stop_times.append({
+                            "trip_id": trip_id,
+                            "arrival_time": arr_time,
+                            "departure_time": dep_time,
+                            "stop_id": stop_id,
+                            "stop_sequence": 1
+                        })
 
     pd.DataFrame(trips).to_csv(RAW_GTFS_DIR / "trips.txt", index=False)
     pd.DataFrame(stop_times).to_csv(RAW_GTFS_DIR / "stop_times.txt", index=False)
-    print(f"[GTFS] Synthetic static GTFS feed created ({len(trips)} trips, {len(stop_times)} stop times).")
+    print(f"[GTFS] Successfully created Chennai standard GTFS dataset: {len(trips)} trips, {len(stop_times)} stop times.")
 
-
-def extract_scheduled_transit_frequencies():
+def extract_scheduled_transit_frequencies() -> pd.DataFrame:
     """
-    Parses the GTFS tables and returns an hourly schedule baseline matrix:
-    DataFrame with columns: [node_id, day_of_week, hour, scheduled_trips]
-    where day_of_week is 0 (Mon) to 6 (Sun).
+    Parses the standard GTFS feed and outputs an hourly scheduled trips count
+    per node_id across (day_of_week 0-6, hour 0-23).
     """
     ensure_gtfs_dataset()
 
-    stops_df = pd.read_csv(RAW_GTFS_DIR / "stops.txt", dtype=str)
-    stop_times_df = pd.read_csv(RAW_GTFS_DIR / "stop_times.txt", dtype=str)
-    trips_df = pd.read_csv(RAW_GTFS_DIR / "trips.txt", dtype=str)
-    calendar_df = pd.read_csv(RAW_GTFS_DIR / "calendar.txt", dtype=str)
+    stops_df = pd.read_csv(RAW_GTFS_DIR / "stops.txt")
+    stop_times_df = pd.read_csv(RAW_GTFS_DIR / "stop_times.txt")
+    trips_df = pd.read_csv(RAW_GTFS_DIR / "trips.txt")
+    calendar_df = pd.read_csv(RAW_GTFS_DIR / "calendar.txt")
 
-    # Map stop_id to node_id
-    stop_to_node = {}
-    for node in NODES:
-        for sid in node["gtfs_stop_ids"]:
-            stop_to_node[str(sid)] = node["id"]
+    stop_times_df["arrival_hour"] = stop_times_df["arrival_time"].apply(lambda x: int(str(x).split(":")[0]))
 
-    # Filter stop_times for our stops
-    stop_times_df["node_id"] = stop_times_df["stop_id"].map(stop_to_node)
-    matched_st = stop_times_df.dropna(subset=["node_id"]).copy()
+    merged = stop_times_df.merge(stops_df[["stop_id", "node_id"]], on="stop_id")
+    merged = merged.merge(trips_df[["trip_id", "service_id"]], on="trip_id")
 
-    # Extract departure hour
-    matched_st["dep_hour"] = matched_st["departure_time"].apply(lambda x: int(str(x).split(":")[0]) if pd.notna(x) and ":" in str(x) else 0)
-
-    # Join with trips to get service_id
-    merged = matched_st.merge(trips_df[["trip_id", "service_id"]], on="trip_id", how="inner")
-    merged = merged.merge(calendar_df, on="service_id", how="inner")
-
-    # Map service_id to day-of-week active flags
     records = []
-    day_cols = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+    service_dow_map = {
+        "WD_SERVICE": [0, 1, 2, 3, 4],
+        "SAT_SERVICE": [5],
+        "SUN_SERVICE": [6]
+    }
 
-    for dow_idx, day_col in enumerate(day_cols):
-        active_trips = merged[merged[day_col] == "1"]
-        freq = active_trips.groupby(["node_id", "dep_hour"]).size().reset_index(name="scheduled_trips")
-        freq["day_of_week"] = dow_idx
-        freq.rename(columns={"dep_hour": "hour"}, inplace=True)
-        records.append(freq)
+    for (node_id, hour, service_id), group in merged.groupby(["node_id", "arrival_hour", "service_id"]):
+        trips_count = len(group)
+        for dow in service_dow_map.get(service_id, []):
+            records.append({
+                "node_id": node_id,
+                "day_of_week": dow,
+                "hour": hour,
+                "scheduled_trips": trips_count
+            })
 
-    result_df = pd.concat(records, ignore_index=True)
+    result_df = pd.DataFrame(records)
+    if result_df.empty:
+        grid = []
+        for node in NODES:
+            for dow in range(7):
+                for hour in range(24):
+                    grid.append({"node_id": node["id"], "day_of_week": dow, "hour": hour, "scheduled_trips": 12})
+        return pd.DataFrame(grid)
 
-    # Ensure all combinations of (node_id, day_of_week, hour) exist
-    all_combinations = pd.MultiIndex.from_product(
-        [[n["id"] for n in NODES], list(range(7)), list(range(24))],
-        names=["node_id", "day_of_week", "hour"]
-    ).to_frame().reset_index(drop=True)
-
-    final_df = all_combinations.merge(result_df, on=["node_id", "day_of_week", "hour"], how="left")
-    final_df["scheduled_trips"] = final_df["scheduled_trips"].fillna(2).astype(int)
-
-    return final_df
+    return result_df
 
 if __name__ == "__main__":
     ensure_gtfs_dataset()
     freq_df = extract_scheduled_transit_frequencies()
-    print("Extracted scheduled transit sample:")
-    print(freq_df.head(15))
-    print(f"Total schedule profile records: {len(freq_df)}")
+    print("Frequency dataframe preview:")
+    print(freq_df.head(10))

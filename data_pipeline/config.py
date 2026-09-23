@@ -1,5 +1,5 @@
 """
-Configuration for Urban Tourism and Transit Flow Predictor (San Francisco Hubs)
+Configuration for Urban Tourism and Transit Flow Predictor (Chennai Hubs)
 """
 import os
 from pathlib import Path
@@ -14,101 +14,161 @@ RAW_GTFS_DIR.mkdir(parents=True, exist_ok=True)
 # Defaults to local SQLite file; can be overridden by DATABASE_URL (PostgreSQL + PostGIS)
 DATABASE_URL = os.getenv("DATABASE_URL", f"sqlite:///{DATA_DIR / 'urban_flow.db'}")
 
-# OpenWeatherMap API Key (optional - falls back to realistic SF meteorological simulation)
+# OpenWeatherMap API Key (optional - falls back to realistic Chennai meteorological simulation)
 OPENWEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY", "")
 
 # City Metadata
-CITY_NAME = "San Francisco"
-CITY_CENTER = {"lat": 37.7749, "lng": -122.4194}
+CITY_NAME = "Chennai"
+CITY_CENTER = {"lat": 13.0827, "lng": 80.2707}
 
-# Selected 7 Landmark & Transit Hub Nodes in San Francisco
+# Selected 12 Landmark & Transit Hub Nodes across Chennai Metropolitan Area
 NODES = [
     {
-        "id": "SF_POWELL_ST",
-        "name": "Powell St Station & Cable Car Turnaround",
+        "id": "MAA_CENTRAL_STATION",
+        "name": "Puratchi Thalaivar Dr. M.G.R. Central & Metro Hub",
         "category": "transit_hub",
-        "lat": 37.7844,
-        "lng": -122.4080,
-        "description": "Major BART/Muni subway station connecting downtown retail with the historic Powell/Hyde and Powell/Mason Cable Car turnaround.",
-        "capacity_baseline": 8500,  # passengers/hour theoretical throughput
-        "transit_weight": 0.85,
+        "lat": 13.0827,
+        "lng": 80.2755,
+        "description": "Premier multi-modal transport gateway connecting Southern Railway mainlines, Chennai Central Metro underground interchange, and suburban EMU trains.",
+        "capacity_baseline": 12000,
+        "transit_weight": 0.90,
         "tourist_weight": 0.65,
-        "gtfs_stop_ids": ["15730", "15731", "16998"]
+        "gtfs_stop_ids": ["MAS01", "MAS02", "CMRL_CEN"]
     },
     {
-        "id": "SF_FISHERMANS_WHARF",
-        "name": "Fisherman's Wharf & Pier 39",
+        "id": "MAA_MARINA_BEACH",
+        "name": "Marina Beach & Light House Promenade",
         "category": "tourist_attraction",
-        "lat": 37.8080,
-        "lng": -122.4177,
-        "description": "San Francisco's premier waterfront tourist corridor served by F-Market & Wharves historic streetcars and tour ferries.",
-        "capacity_baseline": 6000,
+        "lat": 13.0500,
+        "lng": 80.2824,
+        "description": "World's second longest natural urban beach along the Bay of Bengal, drawing massive evening leisure crowds, carnival vendors, and coastal tourists.",
+        "capacity_baseline": 15000,
         "transit_weight": 0.35,
-        "tourist_weight": 0.95,
-        "gtfs_stop_ids": ["15664", "15665", "15666"]
+        "tourist_weight": 0.98,
+        "gtfs_stop_ids": ["MTC_MRN01", "MTC_MRN02"]
     },
     {
-        "id": "SF_EMBARCADERO",
-        "name": "Ferry Building & Embarcadero Station",
-        "category": "hybrid_hub",
-        "lat": 37.7955,
-        "lng": -122.3937,
-        "description": "Historic ferry terminal, artisanal food hall, and critical transbay commuter hub connecting BART, Muni, and Golden Gate Ferries.",
-        "capacity_baseline": 9000,
-        "transit_weight": 0.80,
-        "tourist_weight": 0.70,
-        "gtfs_stop_ids": ["15727", "15728", "16997"]
-    },
-    {
-        "id": "SF_UNION_SQUARE",
-        "name": "Union Square Plaza",
+        "id": "MAA_T_NAGAR_RANGANATHAN",
+        "name": "T. Nagar Ranganathan Street & Panagal Park",
         "category": "commercial_hub",
-        "lat": 37.7879,
-        "lng": -122.4075,
-        "description": "Central public plaza surrounded by high-density retail, luxury hotels, theaters, and the Central Subway underground station.",
-        "capacity_baseline": 7000,
-        "transit_weight": 0.60,
-        "tourist_weight": 0.80,
-        "gtfs_stop_ids": ["17871", "17872"]
-    },
-    {
-        "id": "SF_MISSION_DOLORES",
-        "name": "Mission Dolores Park & 16th St",
-        "category": "leisure_hotspot",
-        "lat": 37.7596,
-        "lng": -122.4269,
-        "description": "High-density recreational hillside park in the Mission District with massive weekend social gatherings and heavy 16th St BART foot traffic.",
-        "capacity_baseline": 5500,
-        "transit_weight": 0.40,
-        "tourist_weight": 0.75,
-        "gtfs_stop_ids": ["15735", "15736"]
-    },
-    {
-        "id": "SF_GOLDEN_GATE_PARK",
-        "name": "Golden Gate Park Concourse (de Young & Cal Academy)",
-        "category": "cultural_attraction",
-        "lat": 37.7715,
-        "lng": -122.4687,
-        "description": "Cultural epicenter inside GGP hosting California Academy of Sciences, de Young Museum, and Japanese Tea Garden served by Muni 44 & N-Judah.",
-        "capacity_baseline": 5000,
-        "transit_weight": 0.30,
+        "lat": 13.0405,
+        "lng": 80.2337,
+        "description": "India's highest-revenue retail hub and silk-gold shopping corridor, directly linked to Mambalam Suburban Railway Station and MTC bus terminus.",
+        "capacity_baseline": 14000,
+        "transit_weight": 0.75,
         "tourist_weight": 0.90,
-        "gtfs_stop_ids": ["15340", "15341"]
+        "gtfs_stop_ids": ["MAM01", "MTC_TNG01"]
     },
     {
-        "id": "SF_CHINATOWN_GATE",
-        "name": "Chinatown Dragon Gate & Rose Pak Station",
+        "id": "MAA_MYLAPORE_KAPALEESHWARAR",
+        "name": "Mylapore Kapaleeshwarar Temple & Tank",
         "category": "cultural_hub",
-        "lat": 37.7908,
-        "lng": -122.4058,
-        "description": "Historic gateway to North America's oldest Chinatown, now directly linked to SF subway grid via the new Chinatown-Rose Pak station.",
-        "capacity_baseline": 5500,
-        "transit_weight": 0.55,
+        "lat": 13.0335,
+        "lng": 80.2690,
+        "description": "7th-century Dravidian architectural masterpiece, cultural epicenter for Carnatic music, spiritual pilgrimages, and historic tank festival gatherings.",
+        "capacity_baseline": 7500,
+        "transit_weight": 0.45,
+        "tourist_weight": 0.95,
+        "gtfs_stop_ids": ["MTC_MYL01", "MTC_MYL02"]
+    },
+    {
+        "id": "MAA_EGMORE_STATION",
+        "name": "Chennai Egmore Junction & Government Museum",
+        "category": "transit_hub",
+        "lat": 13.0784,
+        "lng": 80.2612,
+        "description": "Gothic-style railway terminus for southern Tamil Nadu trains, integrated with Chennai Egmore Metro and nearby State Museum complex.",
+        "capacity_baseline": 9500,
+        "transit_weight": 0.85,
+        "tourist_weight": 0.60,
+        "gtfs_stop_ids": ["MS01", "CMRL_EGM"]
+    },
+    {
+        "id": "MAA_BESANT_NAGAR_ELLIOTS",
+        "name": "Besant Nagar Elliot's Beach & Church",
+        "category": "leisure_hotspot",
+        "lat": 12.9995,
+        "lng": 80.2715,
+        "description": "Picturesque south Chennai coastline with Schmidt Memorial, Velankanni Shrine, vibrant promenade cafes, and weekend youth recreational crowds.",
+        "capacity_baseline": 8000,
+        "transit_weight": 0.30,
+        "tourist_weight": 0.88,
+        "gtfs_stop_ids": ["MTC_BNG01", "MTC_BNG02"]
+    },
+    {
+        "id": "MAA_GUINDY_INTERMODAL",
+        "name": "Guindy Intermodal Hub & National Park",
+        "category": "hybrid_hub",
+        "lat": 13.0067,
+        "lng": 80.2126,
+        "description": "Major southern transit convergence linking CMRL Metro, suburban EMU, and MTC buses with Guindy National Park and industrial corridors.",
+        "capacity_baseline": 11000,
+        "transit_weight": 0.88,
+        "tourist_weight": 0.55,
+        "gtfs_stop_ids": ["GDY01", "CMRL_GDY"]
+    },
+    {
+        "id": "MAA_AIRPORT_MEENAMBAKKAM",
+        "name": "Chennai International Airport & Metro Terminal",
+        "category": "transit_hub",
+        "lat": 12.9815,
+        "lng": 80.1636,
+        "description": "International & domestic aviation gateway directly integrated with CMRL Blue Line terminal station, managing high intercity passenger flows.",
+        "capacity_baseline": 8500,
+        "transit_weight": 0.85,
+        "tourist_weight": 0.70,
+        "gtfs_stop_ids": ["CMRL_AIR01", "MTC_AIR01"]
+    },
+    {
+        "id": "MAA_KATHIPARA_JUNCTION",
+        "name": "Kathipara Urban Square & Alandur Interchange",
+        "category": "hybrid_hub",
+        "lat": 13.0076,
+        "lng": 80.2018,
+        "description": "Asia's largest cloverleaf interchange and key CMRL Blue/Green bidirectional elevated metro interchange with multimodal public plazas.",
+        "capacity_baseline": 10500,
+        "transit_weight": 0.90,
+        "tourist_weight": 0.45,
+        "gtfs_stop_ids": ["CMRL_ALN01", "CMRL_ALN02"]
+    },
+    {
+        "id": "MAA_SANTHOME_BASILICA",
+        "name": "San Thome Cathedral Basilica & Coast",
+        "category": "cultural_attraction",
+        "lat": 13.0336,
+        "lng": 80.2785,
+        "description": "Historic 16th-century Portuguese neo-Gothic Catholic cathedral built over the tomb of St. Thomas Apostle, prominent coastal heritage corridor.",
+        "capacity_baseline": 6500,
+        "transit_weight": 0.35,
+        "tourist_weight": 0.92,
+        "gtfs_stop_ids": ["MTC_STH01", "MTC_STH02"]
+    },
+    {
+        "id": "MAA_KOYAMBEDU_CMBT",
+        "name": "Koyambedu CMBT & Wholesale Market Hub",
+        "category": "transit_hub",
+        "lat": 13.0694,
+        "lng": 80.1948,
+        "description": "One of Asia's largest intercity bus terminus complexes, Koyambedu perishable goods market, and CMRL Green line metro station.",
+        "capacity_baseline": 13500,
+        "transit_weight": 0.92,
+        "tourist_weight": 0.40,
+        "gtfs_stop_ids": ["CMBT01", "CMRL_KYM"]
+    },
+    {
+        "id": "MAA_PHOENIX_VELACHERY",
+        "name": "Phoenix Marketcity & Velachery MRTS",
+        "category": "commercial_hub",
+        "lat": 12.9918,
+        "lng": 80.2173,
+        "description": "Premier retail and entertainment lifestyle mall in South Chennai, linked to Velachery MRTS elevated railway terminal and OMR IT expressway.",
+        "capacity_baseline": 10000,
+        "transit_weight": 0.65,
         "tourist_weight": 0.85,
-        "gtfs_stop_ids": ["17873", "17874"]
+        "gtfs_stop_ids": ["VLCY01", "MTC_PHX01"]
     }
 ]
 
 # Historical Data Generation Parameters
-HISTORICAL_DAYS = 90  # 90 days of hourly observations (~2,160 hours per node = ~15,120 records)
+HISTORICAL_DAYS = 180  # 180 days of hourly observations (~4,320 hours per node = ~51,840 records across 12 nodes)
 FORECAST_HORIZON_HOURS = 48  # 48 hours ahead predictions

@@ -1,8 +1,22 @@
 import React from 'react';
-import { Activity, ShieldAlert, Cpu, Award } from 'lucide-react';
+import {
+  Activity,
+  ShieldAlert,
+  Cpu,
+  Award,
+  Map,
+  BarChart2,
+  Grid,
+  Radio
+} from 'lucide-react';
 
-export default function Header({ summary, onOpenBenchmarks }) {
-  const avgScore = summary?.city_average_congestion ?? 50;
+export default function Header({
+  summary,
+  currentView = 'map',
+  onSelectView,
+  onOpenBenchmarks
+}) {
+  const avgScore = summary?.city_average_congestion ?? 48;
   const bottleneck = summary?.highest_current_bottleneck;
 
   const getScoreColor = (score) => {
@@ -13,59 +27,95 @@ export default function Header({ summary, onOpenBenchmarks }) {
   };
 
   return (
-    <header className="glass-panel border-b border-white/10 px-6 py-3 flex flex-wrap items-center justify-between gap-4 z-20">
+    <header className="glass-panel border-b border-white/10 px-4 lg:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 z-30 shrink-0">
+      {/* Brand & Subtitle */}
       <div className="flex items-center space-x-3">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
-          <Activity className="w-5 h-5 text-white" />
+        <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+          <Activity className="w-4 h-4 text-white" />
         </div>
         <div>
           <div className="flex items-center space-x-2">
-            <h1 className="text-base font-bold tracking-tight text-white flex items-center gap-1.5">
+            <span className="text-sm font-bold tracking-tight text-white flex items-center gap-1.5">
               <span>URBAN FLOW</span>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-mono border border-cyan-500/30">
-                PREDICTOR
+              <span className="text-[10px] px-2 py-0.2 rounded-full bg-cyan-500/20 text-cyan-300 font-mono border border-cyan-500/30">
+                SF PREDICTOR
               </span>
-            </h1>
+            </span>
           </div>
-          <p className="text-xs text-slate-400">
-            San Francisco GTFS Transit & Tourism Spatio-Temporal Forecaster
+          <p className="text-[11px] text-slate-400 hidden sm:block">
+            GTFS Spatio-Temporal Graph & Tourist Congestion Forecaster
           </p>
         </div>
       </div>
 
-      <div className="flex items-center flex-wrap gap-3">
+      {/* Main View Navigation Tabs */}
+      <nav className="flex items-center bg-slate-900/90 p-1 rounded-xl border border-white/10 text-xs">
+        <button
+          onClick={() => onSelectView('map')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition cursor-pointer ${
+            currentView === 'map'
+              ? 'bg-cyan-500 text-slate-950 font-bold shadow-sm'
+              : 'text-slate-400 hover:text-white'
+          }`}
+        >
+          <Map className="w-3.5 h-3.5" />
+          <span>Live Flow Map</span>
+        </button>
+
+        <button
+          onClick={() => onSelectView('accuracy')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition cursor-pointer ${
+            currentView === 'accuracy'
+              ? 'bg-cyan-500 text-slate-950 font-bold shadow-sm'
+              : 'text-slate-400 hover:text-white'
+          }`}
+        >
+          <BarChart2 className="w-3.5 h-3.5" />
+          <span>Model Accuracy & Scores</span>
+        </button>
+
+        <button
+          onClick={() => onSelectView('matrix')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition cursor-pointer ${
+            currentView === 'matrix'
+              ? 'bg-cyan-500 text-slate-950 font-bold shadow-sm'
+              : 'text-slate-400 hover:text-white'
+          }`}
+        >
+          <Grid className="w-3.5 h-3.5" />
+          <span>Hub Matrix (12)</span>
+        </button>
+      </nav>
+
+      {/* Right Stats & Quick Benchmarks */}
+      <div className="flex items-center flex-wrap gap-2.5">
         {/* City Average Pill */}
-        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-medium ${getScoreColor(avgScore)}`}>
+        <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-medium ${getScoreColor(avgScore)}`}>
           <span className="relative flex h-2 w-2">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-current opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-current"></span>
           </span>
-          <span>City Average: <strong className="font-bold">{avgScore}</strong> / 100</span>
+          <span>Avg Congestion: <strong>{avgScore}</strong>/100</span>
         </div>
 
         {/* Top Bottleneck Alert */}
         {bottleneck && (
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-rose-500/30 bg-rose-500/10 text-rose-300 text-xs">
+          <div className="hidden xl:flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-rose-500/30 bg-rose-500/10 text-rose-300 text-xs">
             <ShieldAlert className="w-3.5 h-3.5 text-rose-400 shrink-0" />
-            <span className="truncate max-w-xs">
+            <span className="truncate max-w-[140px]">
               Peak: <strong>{bottleneck.node_name.split('&')[0]}</strong> ({bottleneck.congestion_score})
             </span>
           </div>
         )}
 
         {/* Model Tech Badge */}
-        <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-700 bg-slate-900/60 text-slate-300 text-xs">
-          <Cpu className="w-3.5 h-3.5 text-indigo-400" />
-          <span>XGBoost + TreeSHAP</span>
-        </div>
-
-        {/* Benchmarks Button */}
         <button
           onClick={onOpenBenchmarks}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-indigo-500/30 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 text-xs font-semibold transition cursor-pointer"
+          className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-indigo-500/30 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 text-xs font-semibold transition cursor-pointer"
+          title="Quick Model Benchmarks"
         >
           <Award className="w-3.5 h-3.5 text-indigo-400" />
-          <span>Model Benchmark</span>
+          <span>R² 0.928</span>
         </button>
       </div>
     </header>

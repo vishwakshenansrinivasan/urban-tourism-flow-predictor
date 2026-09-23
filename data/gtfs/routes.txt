@@ -1,9 +1,10 @@
 route_id,route_short_name,route_long_name,route_type
-MUNI_METRO_K_T,KT,Ingleside / Third St Light Rail,0
-MUNI_METRO_N,N,Judah Light Rail,0
-MUNI_F_MARKET,F,Market & Wharves Historic Streetcar,0
-MUNI_CABLE_CAR_PH,PH,Powell / Hyde Cable Car,0
-MUNI_CABLE_CAR_PM,PM,Powell / Mason Cable Car,0
-MUNI_BUS_44,44,O'Shaughnessy / GGP Concourse,3
-MUNI_T_CENTRAL,T,Central Subway (Rose Pak - Union Sq - Mission Bay),0
-BART_CORE,BART,Transbay & Market St Subway Trunk,1
+CMRL_BLUE_LINE,CMRL-B,Blue Line (Wimco Nagar - Central - Guindy - Airport),1
+CMRL_GREEN_LINE,CMRL-G,Green Line (Chennai Central - CMBT Koyambedu - Alandur),1
+SR_SUBURBAN_SOUTH,EMU-S,Chennai Beach - Egmore - Mambalam - Tambaram EMU,2
+SR_SUBURBAN_NORTH_WEST,EMU-NW,Chennai Central - Avadi - Arakkonam Suburban,2
+MRTS_BEACH_VELACHERY,MRTS,Chennai Beach - Mylapore - Velachery Elevated Rail,2
+MTC_TRUNK_29C,29C,Perambur - Central - Mylapore - Besant Nagar,3
+MTC_TRUNK_21G,21G,Broadway - Marina Beach - Guindy - Tambaram,3
+MTC_TRUNK_570,570,CMBT Koyambedu - Guindy - Velachery - OMR IT Corridor,3
+MTC_FEEDER_11G,11G,Broadway - T. Nagar - Panagal Park Feeder,3

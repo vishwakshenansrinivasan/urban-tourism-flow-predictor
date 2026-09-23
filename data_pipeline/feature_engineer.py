@@ -68,6 +68,11 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
         group["rain_weekend_interaction"] = group["is_rain"] * group["is_weekend"] * group["tourist_weight"]
         # Supply vs demand proxy: scheduled trips vs 24h rolling congestion
         group["transit_pressure_ratio"] = group["roll_mean_24h"] / np.maximum(1, group["scheduled_trips"])
+        # Weather-tourism suppression index
+        is_fog_val = group["is_fog"] if "is_fog" in group.columns else 0
+        group["weather_tourism_suppression"] = (group["is_rain"] * group["tourist_weight"] * 1.8) + (is_fog_val * group["tourist_weight"] * 0.5)
+        # Weather-transit shelter surge index
+        group["weather_transit_surge"] = group["is_rain"] * group["transit_weight"] * 1.6
 
         grouped_dfs.append(group)
 
@@ -86,6 +91,11 @@ def build_features(df: pd.DataFrame) -> pd.DataFrame:
     result_df["lag_trips_24"] = result_df["lag_trips_24"].fillna(result_df["scheduled_trips"])
     result_df["lag_trips_1"] = result_df["lag_trips_1"].fillna(result_df["scheduled_trips"])
 
+    if "feels_like_c" not in result_df.columns:
+        result_df["feels_like_c"] = result_df["temp_c"]
+    if "is_fog" not in result_df.columns:
+        result_df["is_fog"] = 0
+
     result_df.sort_values(by=["timestamp", "node_id"], inplace=True)
     result_df.reset_index(drop=True, inplace=True)
 
@@ -100,10 +110,12 @@ FEATURE_COLUMNS = [
     "is_weekend",
     "scheduled_trips",
     "temp_c",
+    "feels_like_c",
     "humidity_pct",
     "precip_mm",
     "wind_speed_kmh",
     "is_rain",
+    "is_fog",
     "capacity_baseline",
     "transit_weight",
     "tourist_weight",
@@ -121,7 +133,9 @@ FEATURE_COLUMNS = [
     "roll_mean_24h",
     "roll_std_24h",
     "rain_weekend_interaction",
-    "transit_pressure_ratio"
+    "transit_pressure_ratio",
+    "weather_tourism_suppression",
+    "weather_transit_surge"
 ]
 
 TARGET_COLUMN = "congestion_score"

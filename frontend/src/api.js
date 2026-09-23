@@ -37,3 +37,11 @@ export async function fetchBenchmarks() {
   const data = await res.json();
   return data.benchmarks;
 }
+
+export async function fetchModelPerformance() {
+  const res = await fetch(`${API_BASE}/api/model-performance`);
+  if (!res.ok) throw new Error(`Failed to fetch model performance: ${res.statusText}`);
+  const data = await res.json();
+  return data.performance;
+}
+

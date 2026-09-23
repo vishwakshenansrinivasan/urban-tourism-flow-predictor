@@ -81,6 +81,31 @@ body {
   background: rgba(15, 23, 42, 0.92) !important;
 }
 
+/* Dark theme for Leaflet Tooltips */
+.leaflet-tooltip {
+  background: rgba(15, 23, 42, 0.96) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 12px !important;
+  color: #ffffff !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.7) !important;
+  padding: 8px 12px !important;
+}
+
+.leaflet-tooltip-top:before {
+  border-top-color: rgba(15, 23, 42, 0.96) !important;
+}
+.leaflet-tooltip-bottom:before {
+  border-bottom-color: rgba(15, 23, 42, 0.96) !important;
+}
+.leaflet-tooltip-left:before {
+  border-left-color: rgba(15, 23, 42, 0.96) !important;
+}
+.leaflet-tooltip-right:before {
+  border-right-color: rgba(15, 23, 42, 0.96) !important;
+}
+
 /* Pulsing animated node rings */
 @keyframes ping-slow {
   0% {

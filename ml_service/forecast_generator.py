@@ -108,6 +108,9 @@ def generate_forecasts(horizon_hours: int = FORECAST_HORIZON_HOURS) -> list:
             roll_mean_24h = float(np.mean(recent_congestion_scores[-24:]))
             roll_std_24h = float(np.std(recent_congestion_scores[-24:]))
 
+            feels_like_c = float(w_row.get("feels_like_c", temp_c - (wind_speed * 0.08)))
+            is_fog = int(w_row.get("is_fog", 1 if "Fog" in condition else 0))
+
             # Feature dictionary for XGBoost & SHAP
             feat_dict = {
                 "hour_sin": np.sin(2 * np.pi * hour / 24.0),
@@ -117,10 +120,12 @@ def generate_forecasts(horizon_hours: int = FORECAST_HORIZON_HOURS) -> list:
                 "is_weekend": is_weekend,
                 "scheduled_trips": sched_trips,
                 "temp_c": temp_c,
+                "feels_like_c": feels_like_c,
                 "humidity_pct": humidity_pct,
                 "precip_mm": precip_mm,
                 "wind_speed_kmh": wind_speed,
                 "is_rain": is_rain,
+                "is_fog": is_fog,
                 "capacity_baseline": capacity,
                 "transit_weight": transit_w,
                 "tourist_weight": tourist_w,
@@ -138,7 +143,9 @@ def generate_forecasts(horizon_hours: int = FORECAST_HORIZON_HOURS) -> list:
                 "roll_mean_24h": roll_mean_24h,
                 "roll_std_24h": roll_std_24h,
                 "rain_weekend_interaction": is_rain * is_weekend * tourist_w,
-                "transit_pressure_ratio": roll_mean_24h / max(1, sched_trips)
+                "transit_pressure_ratio": roll_mean_24h / max(1, sched_trips),
+                "weather_tourism_suppression": (is_rain * tourist_w * 1.8) + (is_fog * tourist_w * 0.5),
+                "weather_transit_surge": is_rain * transit_w * 1.6
             }
 
             # Generate SHAP explanation & prediction

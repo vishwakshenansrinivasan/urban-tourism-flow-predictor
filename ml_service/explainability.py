@@ -1,3 +1,4 @@
+
 """
 SHAP Explainability Module for Congestion Forecasting.
 Uses TreeSHAP to compute exact feature attribution for individual predictions,
@@ -46,7 +47,11 @@ FEATURE_HUMAN_LABELS = {
     "roll_mean_24h": "24-Hour Average Baseline",
     "roll_std_24h": "24-Hour Crowd Volatility",
     "rain_weekend_interaction": "Rainstorm x Weekend Suppression",
-    "transit_pressure_ratio": "Transit Demand-to-Supply Ratio"
+    "transit_pressure_ratio": "Transit Demand-to-Supply Ratio",
+    "feels_like_c": "Apparent Feels-Like Temperature",
+    "is_fog": "SF Marine Fog Layer",
+    "weather_tourism_suppression": "Weather Tourist Dampening Index",
+    "weather_transit_surge": "Rainfall Transit Inflow Surge"
 }
 
 _EXPLAINER_INSTANCE = None
@@ -63,7 +68,7 @@ def get_explainer():
         _EXPLAINER_INSTANCE = shap.TreeExplainer(_MODEL_INSTANCE)
     return _EXPLAINER_INSTANCE, _MODEL_INSTANCE
 
-def explain_features(feature_row: pd.Series or dict) -> dict:
+def explain_features(feature_row: pd.Series | dict) -> dict:
     """
     Computes SHAP value attributions for a single observation row.
     Returns:
