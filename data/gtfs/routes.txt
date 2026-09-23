@@ -1,0 +1,9 @@
+route_id,route_short_name,route_long_name,route_type
+MUNI_METRO_K_T,KT,Ingleside / Third St Light Rail,0
+MUNI_METRO_N,N,Judah Light Rail,0
+MUNI_F_MARKET,F,Market & Wharves Historic Streetcar,0
+MUNI_CABLE_CAR_PH,PH,Powell / Hyde Cable Car,0
+MUNI_CABLE_CAR_PM,PM,Powell / Mason Cable Car,0
+MUNI_BUS_44,44,O'Shaughnessy / GGP Concourse,3
+MUNI_T_CENTRAL,T,Central Subway (Rose Pak - Union Sq - Mission Bay),0
+BART_CORE,BART,Transbay & Market St Subway Trunk,1

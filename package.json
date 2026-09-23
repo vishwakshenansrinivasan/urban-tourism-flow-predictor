@@ -1,0 +1,23 @@
+{
+  "name": "urban-tourism-flow-predictor",
+  "version": "1.0.0",
+  "description": "Spatio-temporal transit & tourism congestion predictor for San Francisco using XGBoost, TreeSHAP, GTFS, and a React geospatial dashboard.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -n backend,frontend -c cyan,magenta \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
+    "start": "npm run build && node backend/src/server.js",
+    "build": "npm run build --prefix frontend",
+    "test": "npm test --prefix backend",
+    "verify:pipeline": "python data_pipeline/verify_pipeline.py",
+    "verify:ml": "python ml_service/verify_ml.py",
+    "verify:api": "npm test --prefix backend",
+    "verify:all": "npm run verify:pipeline && npm run verify:ml && npm run verify:api",
+    "pipeline": "python -c \"from data_pipeline.db_storage import init_database; from data_pipeline.traffic_synthesizer import synthesize_historical_dataset; from data_pipeline.db_storage import save_hourly_metrics; init_database(); df = synthesize_historical_dataset(); save_hourly_metrics(df); print(f'Done: {len(df)} records saved.')\"",
+    "train": "python ml_service/train_model.py",
+    "forecast": "python ml_service/forecast_generator.py"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
