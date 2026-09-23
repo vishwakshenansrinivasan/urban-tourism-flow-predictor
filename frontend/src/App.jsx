@@ -6,6 +6,7 @@ import NodeDrawer from './components/NodeDrawer';
 import ModelAccuracyView from './components/ModelAccuracyView';
 import NodeMatrixView from './components/NodeMatrixView';
 import BenchmarksModal from './components/BenchmarksModal';
+import ChatAssistant from './components/ChatAssistant';
 import { fetchNodes, fetchForecast, fetchSummary, fetchBenchmarks } from './api';
 
 export default function App() {
@@ -17,6 +18,7 @@ export default function App() {
   const [selectedNodeId, setSelectedNodeId] = useState('MAA_CENTRAL_STATION');
   const [currentView, setCurrentView] = useState('map'); // 'map' | 'accuracy' | 'matrix'
   const [isBenchmarksOpen, setIsBenchmarksOpen] = useState(false);
+  const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -108,13 +110,15 @@ export default function App() {
   }
 
   return (
-    <div className="w-screen h-screen flex flex-col bg-slate-950 text-slate-100 overflow-hidden select-none">
+    <div className="w-screen h-screen flex flex-col bg-slate-950 text-slate-100 overflow-hidden select-none relative">
       {/* Top Header Navigation */}
       <Header
         summary={summary}
         currentView={currentView}
         onSelectView={setCurrentView}
         onOpenBenchmarks={() => setIsBenchmarksOpen(true)}
+        onToggleAssistant={() => setIsAssistantOpen((prev) => !prev)}
+        isAssistantOpen={isAssistantOpen}
       />
 
       {/* VIEW 1: Interactive Spatio-Temporal Geospatial Map */}
@@ -166,6 +170,16 @@ export default function App() {
           onSelectNodeAndSwitchToMap={handleSelectNodeAndNavigateToMap}
         />
       )}
+
+      {/* PulseAI Interactive Question Bot */}
+      <ChatAssistant
+        isOpen={isAssistantOpen}
+        onToggle={() => setIsAssistantOpen((prev) => !prev)}
+        nodes={nodes}
+        selectedNodeId={selectedNodeId}
+        selectedHour={selectedHour}
+        onSelectNodeAndNavigateToMap={handleSelectNodeAndNavigateToMap}
+      />
 
       {/* Quick Model Benchmark Comparison Modal */}
       <BenchmarksModal

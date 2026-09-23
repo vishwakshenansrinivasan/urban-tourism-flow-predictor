@@ -3,8 +3,32 @@
  */
 import { Router } from 'express';
 import { query, getDbHealth } from './db.js';
+import { processAssistantQuery } from './assistantEngine.js';
 
 const router = Router();
+
+/**
+ * POST /api/assistant/ask and POST /api/chat
+ * Interactive Question Bot for traffic predictions, best visit times, and SHAP insights.
+ */
+router.post(['/assistant/ask', '/api/assistant/ask', '/api/chat'], async (req, res) => {
+  try {
+    const { question, context } = req.body || {};
+    if (!question || typeof question !== 'string') {
+      return res.status(400).json({ success: false, error: 'A valid question string is required.' });
+    }
+
+    const response = await processAssistantQuery(question, context || {});
+    res.json(response);
+  } catch (err) {
+    console.error('Error processing assistant query:', err);
+    res.status(500).json({
+      success: false,
+      reply: 'An error occurred while analyzing real-time predictions. Please try again.',
+      error: err.message
+    });
+  }
+});
 
 /**
  * GET /nodes and /api/nodes

@@ -14,7 +14,9 @@ export default function Header({
   summary,
   currentView = 'map',
   onSelectView,
-  onOpenBenchmarks
+  onOpenBenchmarks,
+  onToggleAssistant,
+  isAssistantOpen = false
 }) {
   const avgScore = summary?.city_average_congestion ?? 48;
   const bottleneck = summary?.highest_current_bottleneck;
@@ -87,7 +89,7 @@ export default function Header({
         </button>
       </nav>
 
-      {/* Right Stats & Quick Benchmarks */}
+      {/* Right Stats, Benchmarks & AI Bot Button */}
       <div className="flex items-center flex-wrap gap-2.5">
         {/* City Average Pill */}
         <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-medium ${getScoreColor(avgScore)}`}>
@@ -115,7 +117,22 @@ export default function Header({
           title="Quick Model Benchmarks"
         >
           <Award className="w-3.5 h-3.5 text-indigo-400" />
-          <span>R² 0.961</span>
+          <span>R² 0.982</span>
+        </button>
+
+        {/* Ask PulseAI Assistant Button */}
+        <button
+          onClick={onToggleAssistant}
+          className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition cursor-pointer border shadow-sm ${
+            isAssistantOpen
+              ? 'bg-gradient-to-r from-cyan-500 to-indigo-600 text-white border-cyan-400 shadow-cyan-500/30'
+              : 'bg-slate-900/90 hover:bg-slate-800 text-cyan-300 hover:text-white border-cyan-500/30 hover:border-cyan-400'
+          }`}
+          title="Toggle PulseAI Question Assistant"
+        >
+          <Cpu className="w-3.5 h-3.5 text-cyan-400" />
+          <span>Ask AI Bot</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
         </button>
       </div>
     </header>
