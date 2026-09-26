@@ -1,20 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
-  MessageSquare,
   Bot,
   Send,
   X,
-  Sparkles,
-  ChevronDown,
   Trash2,
-  TrendingUp,
-  Clock,
   MapPin,
-  Compass,
-  AlertTriangle,
-  CheckCircle2,
-  Cpu,
-  Layers,
   ExternalLink
 } from 'lucide-react';
 
@@ -153,226 +143,218 @@ export default function ChatAssistant({
 
   // Simple Markdown-to-HTML parser for formatted bot output
   const renderFormattedText = (text) => {
-    // Split by lines to render headers, bullet points, and code tags
     const lines = text.split('\n');
     return lines.map((line, idx) => {
-      // Heading 3
       if (line.startsWith('### ')) {
         return (
-          <h4 key={idx} className="text-sm font-bold text-cyan-300 mt-2 mb-1">
+          <h4 key={idx} className="text-sm font-bold text-slate-900 mt-2 mb-1">
             {line.replace('### ', '')}
           </h4>
         );
       }
-      // Heading 4
       if (line.startsWith('#### ')) {
         return (
-          <h5 key={idx} className="text-xs font-bold text-slate-200 mt-2 mb-1">
+          <h5 key={idx} className="text-xs font-semibold text-slate-800 mt-1.5 mb-1">
             {line.replace('#### ', '')}
           </h5>
         );
       }
-      // Table Row
       if (line.startsWith('|') && line.endsWith('|')) {
         if (line.includes('---')) return null;
         const cells = line.split('|').slice(1, -1).map((c) => c.trim());
         return (
-          <div key={idx} className="grid grid-cols-4 gap-1 text-[11px] py-1 border-b border-slate-800 font-mono">
+          <div key={idx} className="grid grid-cols-4 gap-1 text-[11px] py-1 border-b border-slate-200 font-mono">
             {cells.map((cell, cIdx) => (
-              <span key={cIdx} className={cIdx === 0 ? 'font-bold text-slate-300' : 'text-slate-400'}>
+              <span key={cIdx} className={cIdx === 0 ? 'font-semibold text-slate-900' : 'text-slate-600'}>
                 {cell.replace(/\*\*/g, '')}
               </span>
             ))}
           </div>
         );
       }
-      // Bullet point
       if (line.startsWith('- ') || line.startsWith('* ')) {
         const content = line.substring(2);
         return (
-          <div key={idx} className="flex items-start gap-1.5 text-xs text-slate-300 my-0.5 pl-1">
-            <span className="text-cyan-400 shrink-0 leading-5">•</span>
+          <div key={idx} className="flex items-start gap-1.5 text-xs text-slate-700 my-0.5 pl-1">
+            <span className="text-indigo-600 shrink-0 leading-5">•</span>
             <span dangerouslySetInnerHTML={{ __html: formatInline(content) }} />
           </div>
         );
       }
-      // Numbered list
       if (/^\d+\.\s/.test(line)) {
         return (
-          <div key={idx} className="text-xs text-slate-300 my-1 pl-1" dangerouslySetInnerHTML={{ __html: formatInline(line) }} />
+          <div key={idx} className="text-xs text-slate-700 my-1 pl-1" dangerouslySetInnerHTML={{ __html: formatInline(line) }} />
         );
       }
-      // Empty line
       if (!line.trim()) {
         return <div key={idx} className="h-1.5" />;
       }
-      // Regular paragraph
       return (
-        <p key={idx} className="text-xs text-slate-300 leading-relaxed my-0.5" dangerouslySetInnerHTML={{ __html: formatInline(line) }} />
+        <p key={idx} className="text-xs text-slate-700 leading-relaxed my-0.5" dangerouslySetInnerHTML={{ __html: formatInline(line) }} />
       );
     });
   };
 
   const formatInline = (str) => {
     return str
-      .replace(/\*\*(.*?)\*\*/g, '<strong class="text-white font-semibold">$1</strong>')
-      .replace(/`([^`]+)`/g, '<code class="px-1.5 py-0.5 rounded bg-slate-800 text-cyan-300 font-mono text-[11px]">$1</code>')
-      .replace(/\*([^*]+)\*/g, '<em class="text-slate-400 italic">$1</em>');
+      .replace(/\*\*(.*?)\*\*/g, '<strong class="text-slate-900 font-semibold">$1</strong>')
+      .replace(/`([^`]+)`/g, '<code class="px-1.5 py-0.2 rounded bg-slate-100 text-indigo-700 font-mono text-[11px] border border-slate-200">$1</code>')
+      .replace(/\*([^*]+)\*/g, '<em class="text-slate-500 italic">$1</em>');
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed top-14 right-4 z-50 w-[92vw] sm:w-[460px] h-[calc(100vh-5rem)] max-h-[640px] flex flex-col rounded-2xl bg-slate-950/95 border border-cyan-500/30 backdrop-blur-2xl shadow-2xl shadow-black/90 overflow-hidden animate-in fade-in slide-in-from-right-6 duration-200">
-          {/* Header */}
-          <div className="px-4 py-3 bg-gradient-to-r from-slate-900 via-slate-900/90 to-slate-950 border-b border-white/10 flex items-center justify-between shrink-0">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center shadow-md shadow-cyan-500/20">
-                <Bot className="w-4 h-4 text-white" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="font-bold text-xs text-white tracking-wide">PulseAI Assistant</span>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 font-mono border border-cyan-500/30">
-                    Live Telemetry
-                  </span>
-                </div>
-                <div className="text-[10px] text-slate-400 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                  <span>48h Forward Predictions & SHAP Explainability</span>
-                </div>
-              </div>
+    <div className="fixed top-14 right-4 z-50 w-[92vw] sm:w-[440px] h-[calc(100vh-5rem)] max-h-[620px] flex flex-col rounded-2xl bg-white border border-slate-200 shadow-2xl overflow-hidden animate-slide-right">
+      {/* Header */}
+      <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between shrink-0 bg-white">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shadow-xs">
+            <Bot className="w-4 h-4" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-slate-900 uppercase tracking-wide">PulseAI</span>
+              <span className="text-[10px] px-2 py-0.2 rounded-full bg-indigo-50 text-indigo-700 font-mono font-medium border border-indigo-100">
+                Live Copilot
+              </span>
             </div>
-
-            <div className="flex items-center gap-1">
-              <button
-                onClick={clearChat}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition cursor-pointer"
-                title="Clear Conversation"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-              </button>
-              <button
-                onClick={onToggle}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition cursor-pointer"
-                title="Close Assistant"
-              >
-                <X className="w-4 h-4" />
-              </button>
+            <div className="text-[10px] text-slate-400 flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              <span>48h Projections · SHAP Attribution</span>
             </div>
           </div>
+        </div>
 
-          {/* Preset Quick Chips Bar */}
-          <div className="px-3 py-2 bg-slate-900/60 border-b border-white/5 overflow-x-auto no-scrollbar flex items-center gap-1.5 shrink-0">
-            {SUGGESTIONS.map((s, idx) => (
-              <button
-                key={idx}
-                onClick={() => handleSend(s.query)}
-                className="whitespace-nowrap px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-cyan-500/20 hover:border-cyan-500/40 border border-slate-700/60 text-[11px] text-slate-300 hover:text-cyan-300 transition cursor-pointer"
-              >
-                {s.label}
-              </button>
-            ))}
-          </div>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={clearChat}
+            className="p-1.5 rounded-lg btn-secondary text-slate-400 hover:text-rose-600 cursor-pointer"
+            title="Clear Conversation"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+          </button>
+          <button
+            onClick={onToggle}
+            className="p-1.5 rounded-lg btn-secondary text-slate-400 hover:text-slate-900 cursor-pointer"
+            title="Close Assistant"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      </div>
 
-          {/* Messages Scrollable Area */}
-          <div className="flex-1 p-4 overflow-y-auto space-y-3.5 custom-scrollbar">
-            {messages.map((m) => (
-              <div
-                key={m.id}
-                className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'}`}
-              >
-                <div
-                  className={`max-w-[90%] rounded-2xl px-3.5 py-2.5 shadow-md ${
-                    m.role === 'user'
-                      ? 'bg-gradient-to-r from-cyan-600 to-indigo-600 text-white rounded-br-none text-xs leading-relaxed'
-                      : 'bg-slate-900/90 border border-slate-800 text-slate-200 rounded-bl-none'
-                  }`}
-                >
-                  {m.role === 'user' ? (
-                    <p>{m.text}</p>
-                  ) : (
-                    <div className="space-y-1">{renderFormattedText(m.text)}</div>
-                  )}
+      {/* Preset Quick Chips Bar */}
+      <div className="px-3 py-2 border-b border-slate-100 overflow-x-auto no-scrollbar flex items-center gap-1.5 shrink-0 bg-slate-50">
+        {SUGGESTIONS.map((s, idx) => (
+          <button
+            key={idx}
+            onClick={() => handleSend(s.query)}
+            className="whitespace-nowrap px-2.5 py-1 rounded-lg bg-white border border-slate-200 hover:border-indigo-300 hover:text-indigo-600 text-[11px] text-slate-600 transition cursor-pointer shadow-xs"
+          >
+            {s.label}
+          </button>
+        ))}
+      </div>
 
-                  {/* Matched Node Interactive Card */}
-                  {m.matched_node && (
-                    <div className="mt-2.5 pt-2 border-t border-slate-800 flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-1.5 text-[11px] text-slate-300">
-                        <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-                        <span className="font-semibold truncate">{m.matched_node.name}</span>
-                      </div>
-                      {onSelectNodeAndNavigateToMap && (
-                        <button
-                          onClick={() => onSelectNodeAndNavigateToMap(m.matched_node.id)}
-                          className="px-2 py-0.5 rounded bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-[10px] font-bold flex items-center gap-1 transition cursor-pointer shrink-0"
-                        >
-                          <span>Open Map</span>
-                          <ExternalLink className="w-2.5 h-2.5" />
-                        </button>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Context Suggestions */}
-                  {m.suggestions && m.suggestions.length > 0 && (
-                    <div className="mt-3 pt-2 border-t border-slate-800/80 flex flex-wrap gap-1.5">
-                      {m.suggestions.map((sug, sIdx) => (
-                        <button
-                          key={sIdx}
-                          onClick={() => handleSend(sug)}
-                          className="text-[10px] px-2 py-1 rounded-md bg-slate-800/90 hover:bg-cyan-500/20 text-slate-400 hover:text-cyan-300 border border-slate-700/50 transition cursor-pointer"
-                        >
-                          ↳ {sug}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <span className="text-[9px] font-mono text-slate-500 mt-1 px-1">
-                  {m.timestamp}
-                </span>
-              </div>
-            ))}
-
-            {isTyping && (
-              <div className="flex items-center gap-2 p-3 rounded-2xl bg-slate-900/80 border border-slate-800 w-24">
-                <div className="w-2 h-2 rounded-full bg-cyan-400 animate-bounce"></div>
-                <div className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce [animation-delay:0.2s]"></div>
-                <div className="w-2 h-2 rounded-full bg-purple-400 animate-bounce [animation-delay:0.4s]"></div>
-              </div>
-            )}
-            <div ref={messagesEndRef} />
-          </div>
-
-          {/* Input Area */}
-          <div className="p-3 bg-slate-900 border-t border-white/10 shrink-0">
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSend();
-              }}
-              className="flex items-center gap-2"
+      {/* Messages Scrollable Area */}
+      <div className="flex-1 p-4 overflow-y-auto space-y-3 custom-scrollbar bg-slate-50/50">
+        {messages.map((m) => (
+          <div
+            key={m.id}
+            className={`flex flex-col ${m.role === 'user' ? 'items-end' : 'items-start'}`}
+          >
+            <div
+              className={`max-w-[90%] rounded-xl px-3.5 py-2.5 shadow-xs ${
+                m.role === 'user'
+                  ? 'btn-primary rounded-br-none text-xs leading-relaxed'
+                  : 'bg-white border border-slate-200 text-slate-800 rounded-bl-none'
+              }`}
             >
-              <input
-                ref={inputRef}
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Ask about rush hours, Marina beach, T. Nagar, Metro routing..."
-                className="flex-1 bg-slate-950 border border-slate-700/80 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/50 transition"
-              />
-              <button
-                type="submit"
-                disabled={!input.trim() || isTyping}
-                className="p-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 disabled:opacity-40 disabled:cursor-not-allowed text-slate-950 font-bold transition shadow-md shadow-cyan-500/20 cursor-pointer"
-                title="Send Message"
-              >
-                <Send className="w-4 h-4" />
-              </button>
-            </form>
+              {m.role === 'user' ? (
+                <p className="text-white font-medium">{m.text}</p>
+              ) : (
+                <div className="space-y-1">{renderFormattedText(m.text)}</div>
+              )}
+
+              {/* Matched Node Interactive Card */}
+              {m.matched_node && (
+                <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-1.5 text-[11px] text-slate-700">
+                    <MapPin className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
+                    <span className="font-semibold truncate">{m.matched_node.name}</span>
+                  </div>
+                  {onSelectNodeAndNavigateToMap && (
+                    <button
+                      onClick={() => onSelectNodeAndNavigateToMap(m.matched_node.id)}
+                      className="px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] font-semibold flex items-center gap-1 transition cursor-pointer shrink-0 hover:bg-indigo-100"
+                    >
+                      <span>Open Map</span>
+                      <ExternalLink className="w-2.5 h-2.5" />
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {/* Context Suggestions */}
+              {m.suggestions && m.suggestions.length > 0 && (
+                <div className="mt-2.5 pt-2 border-t border-slate-100 flex flex-wrap gap-1.5">
+                  {m.suggestions.map((sug, sIdx) => (
+                    <button
+                      key={sIdx}
+                      onClick={() => handleSend(sug)}
+                      className="text-[10px] px-2 py-0.5 rounded-md bg-slate-100 hover:bg-indigo-50 hover:text-indigo-700 text-slate-600 transition cursor-pointer"
+                    >
+                      ↳ {sug}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <span className="text-[9px] font-mono text-slate-400 mt-1 px-1">
+              {m.timestamp}
+            </span>
           </div>
+        ))}
+
+        {isTyping && (
+          <div className="flex items-center gap-1.5 p-3 rounded-xl bg-white border border-slate-200 w-16 shadow-xs">
+            <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-bounce"></div>
+            <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-bounce [animation-delay:0.2s]"></div>
+            <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-bounce [animation-delay:0.4s]"></div>
+          </div>
+        )}
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Input Area */}
+      <div className="p-3 border-t border-slate-200 shrink-0 bg-white">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSend();
+          }}
+          className="flex items-center gap-2"
+        >
+          <input
+            ref={inputRef}
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Ask about Marina Beach, rush hours, Metro routing…"
+            className="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+          />
+          <button
+            type="submit"
+            disabled={!input.trim() || isTyping}
+            className="p-2 rounded-lg btn-primary disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+            title="Send Message"
+          >
+            <Send className="w-4 h-4" />
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

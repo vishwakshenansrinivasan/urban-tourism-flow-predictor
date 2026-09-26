@@ -73,6 +73,45 @@ export default function App() {
     Object.values(nodeForecasts)[0]?.find((f) => f.horizon_hour === selectedHour) ||
     null;
 
+  // Compute dynamic city average congestion and peak bottleneck for selectedHour
+  const dynamicMetrics = React.useMemo(() => {
+    if (!nodes || nodes.length === 0) {
+      return {
+        avgScore: summary?.city_average_congestion ?? 48,
+        bottleneck: summary?.highest_current_bottleneck ?? null
+      };
+    }
+
+    let totalScore = 0;
+    let count = 0;
+    let highestScore = -1;
+    let topNode = null;
+
+    nodes.forEach((node) => {
+      const fcList = nodeForecasts[node.id] || [];
+      const fcPoint = fcList.find((f) => f.horizon_hour === selectedHour) || fcList[0];
+      const score = fcPoint ? fcPoint.predicted_congestion : (node.current_status?.congestion_score ?? 50);
+      totalScore += score;
+      count += 1;
+
+      if (score > highestScore) {
+        highestScore = score;
+        topNode = {
+          node_id: node.id,
+          node_name: node.name,
+          congestion_score: score,
+          risk_level: fcPoint ? fcPoint.risk_level : (node.current_status?.risk_level ?? 'MODERATE')
+        };
+      }
+    });
+
+    const avgScore = count > 0 ? Math.round(totalScore / count) : 48;
+    return {
+      avgScore,
+      bottleneck: topNode
+    };
+  }, [nodes, nodeForecasts, selectedHour, summary]);
+
   const handleSelectNodeAndNavigateToMap = (nodeId) => {
     setSelectedNodeId(nodeId);
     setCurrentView('map');
@@ -80,13 +119,13 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="w-screen h-screen bg-slate-950 flex flex-col items-center justify-center text-white space-y-4">
+      <div className="w-screen h-screen flex flex-col items-center justify-center bg-slate-50 text-slate-900 space-y-4">
         <div className="relative flex items-center justify-center">
-          <div className="w-16 h-16 rounded-full border-4 border-cyan-500/20 border-t-cyan-400 animate-spin"></div>
-          <div className="absolute font-bold text-xs text-cyan-400">PULSE</div>
+          <div className="w-12 h-12 rounded-full border-3 border-indigo-100 border-t-indigo-600 animate-spin" />
         </div>
-        <div className="text-sm font-medium text-slate-300">
-          Loading 12 Chennai Hubs & CMRL Telemetry...
+        <div className="text-center">
+          <p className="text-xs font-semibold uppercase tracking-wider text-indigo-600 mb-1">Urban Flow Predictor</p>
+          <p className="text-sm text-slate-500 font-normal">Loading 12 Chennai Hubs & CMRL Telemetry…</p>
         </div>
       </div>
     );
@@ -94,13 +133,16 @@ export default function App() {
 
   if (error) {
     return (
-      <div className="w-screen h-screen bg-slate-950 flex flex-col items-center justify-center p-6 text-center text-white">
-        <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 max-w-md">
-          <h2 className="font-bold text-base mb-1">Backend Connection Error</h2>
-          <p className="text-xs text-slate-300 mb-4">{error}</p>
+      <div className="w-screen h-screen flex flex-col items-center justify-center p-6 text-center bg-slate-50">
+        <div className="p-8 rounded-2xl bg-white border border-rose-200 shadow-sm text-slate-800 max-w-md animate-fade-up">
+          <div className="w-10 h-10 rounded-xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center mx-auto mb-3">
+            <span className="font-bold text-lg">!</span>
+          </div>
+          <h2 className="text-base font-bold mb-1.5 text-slate-900">Backend Connection Error</h2>
+          <p className="text-xs text-slate-500 mb-5">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="px-4 py-2 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-black text-xs font-bold transition cursor-pointer"
+            className="px-5 py-2 rounded-xl btn-primary text-xs font-semibold cursor-pointer"
           >
             Retry Connection
           </button>
@@ -110,10 +152,13 @@ export default function App() {
   }
 
   return (
-    <div className="w-screen h-screen flex flex-col bg-slate-950 text-slate-100 overflow-hidden select-none relative">
+    <div className="w-screen h-screen flex flex-col bg-slate-50 text-slate-900 overflow-hidden select-none relative font-sans">
       {/* Top Header Navigation */}
       <Header
         summary={summary}
+        avgScore={dynamicMetrics.avgScore}
+        bottleneck={dynamicMetrics.bottleneck}
+        selectedHour={selectedHour}
         currentView={currentView}
         onSelectView={setCurrentView}
         onOpenBenchmarks={() => setIsBenchmarksOpen(true)}

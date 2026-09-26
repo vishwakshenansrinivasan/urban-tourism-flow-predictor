@@ -1,133 +1,282 @@
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
 
-@theme {
-  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+/* ─── Light Design Tokens ─────────────────────────────────────────── */
+:root {
+  /* Backgrounds */
+  --bg-base:        #f8fafc;
+  --bg-surface:     #ffffff;
+  --bg-subtle:      #f1f5f9;
+  --bg-raised:      #ffffff;
+
+  /* Borders */
+  --border:         #e2e8f0;
+  --border-subtle:  #f1f5f9;
+  --border-strong:  #cbd5e1;
+  --border-focus:   #4f46e5;
+
+  /* Text */
+  --text-primary:   #0f172a;
+  --text-secondary: #475569;
+  --text-muted:     #94a3b8;
+
+  /* Accent — Indigo */
+  --accent:         #4f46e5;
+  --accent-hover:   #4338ca;
+  --accent-subtle:  #eef2ff;
+  --accent-text:    #3730a3;
+  --accent-ring:    rgba(79, 70, 229, 0.15);
+
+  /* Status Colors */
+  --green:          #059669;
+  --green-bg:       #ecfdf5;
+  --green-border:   #a7f3d0;
+
+  --amber:          #d97706;
+  --amber-bg:       #fffbeb;
+  --amber-border:   #fde68a;
+
+  --orange:         #ea580c;
+  --orange-bg:      #fff7ed;
+  --orange-border:  #fed7aa;
+
+  --red:            #dc2626;
+  --red-bg:         #fef2f2;
+  --red-border:     #fecaca;
+
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
-body {
+/* ─── Base Reset & Typography ────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
   font-family: var(--font-sans);
-  background-color: #020617;
-  color: #f8fafc;
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 14px;
+  line-height: 1.5;
   overflow-x: hidden;
 }
 
-/* Custom scrollbars */
+/* ─── Scrollbar ──────────────────────────────────────────────────── */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.6);
+  background: var(--bg-subtle);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(71, 85, 105, 0.6);
+  background: #cbd5e1;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(100, 116, 139, 0.9);
+  background: #94a3b8;
 }
 
-/* Glassmorphism utility */
-.glass-panel {
-  background: rgba(15, 23, 42, 0.78);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
-.glass-card {
-  background: rgba(30, 41, 59, 0.55);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+/* ─── Card & Surfaces ────────────────────────────────────────────── */
+.surface-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
 }
 
-/* Leaflet dark theme tweaks */
+.surface-card-hover {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.surface-card-hover:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.06), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+  transform: translateY(-1px);
+}
+
+/* ─── Buttons ────────────────────────────────────────────────────── */
+.btn-primary {
+  background-color: #4f46e5;
+  color: #ffffff;
+  border: 1px solid #4338ca;
+  box-shadow: 0 1px 2px 0 rgba(79, 70, 229, 0.2);
+  transition: all 0.15s ease;
+}
+.btn-primary:hover {
+  background-color: #4338ca;
+  box-shadow: 0 2px 4px 0 rgba(79, 70, 229, 0.3);
+}
+
+.btn-secondary {
+  background-color: #ffffff;
+  color: #334155;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  transition: all 0.15s ease;
+}
+.btn-secondary:hover {
+  background-color: #f8fafc;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+/* ─── Risk Colors ────────────────────────────────────────────────── */
+.risk-low {
+  background-color: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
+}
+
+.risk-moderate {
+  background-color: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.risk-high {
+  background-color: #fff7ed;
+  color: #c2410c;
+  border: 1px solid #fed7aa;
+}
+
+.risk-critical {
+  background-color: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+/* ─── Range Slider ───────────────────────────────────────────────── */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+  width: 100%;
+}
+input[type='range']::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 9999px;
+  background: #e2e8f0;
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #4f46e5;
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 0 1px #4f46e5;
+  margin-top: -6px;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+input[type='range']:hover::-webkit-slider-thumb {
+  transform: scale(1.1);
+}
+input[type='range']:focus::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.25), 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* ─── Animations ─────────────────────────────────────────────────── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideRight {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pingSlow {
+  0%   { transform: scale(1); opacity: 0.6; }
+  75%  { transform: scale(2.2); opacity: 0; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
+.animate-fade-in { animation: fadeIn 0.2s ease-out forwards; }
+.animate-fade-up { animation: fadeUp 0.25s ease-out forwards; }
+.animate-slide-right { animation: slideRight 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-slide-up { animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+/* ─── Leaflet Light Customization ────────────────────────────────── */
 .leaflet-container {
-  background-color: #090d16 !important;
-  font-family: inherit;
-  z-index: 1;
+  background-color: #f1f5f9 !important;
+  font-family: var(--font-sans) !important;
 }
 
 .leaflet-control-zoom {
-  border: 1px solid rgba(255, 255, 255, 0.1) !important;
-  background: rgba(15, 23, 42, 0.8) !important;
-  backdrop-filter: blur(8px) !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+  overflow: hidden !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
 }
 
 .leaflet-control-zoom a {
-  background: transparent !important;
-  color: #94a3b8 !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background-color: #ffffff !important;
+  color: #334155 !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  transition: background-color 0.15s ease !important;
 }
 
 .leaflet-control-zoom a:hover {
-  background: rgba(255, 255, 255, 0.05) !important;
-  color: #f8fafc !important;
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
 }
 
 .leaflet-popup-content-wrapper {
-  background: rgba(15, 23, 42, 0.92) !important;
-  backdrop-filter: blur(16px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
   border-radius: 12px !important;
-  color: #f8fafc !important;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5) !important;
+  color: #0f172a !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05) !important;
 }
 
 .leaflet-popup-tip {
-  background: rgba(15, 23, 42, 0.92) !important;
+  background: #ffffff !important;
 }
 
-/* Dark theme for Leaflet Tooltips */
 .leaflet-tooltip {
-  background: rgba(15, 23, 42, 0.96) !important;
-  backdrop-filter: blur(16px) !important;
-  -webkit-backdrop-filter: blur(16px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.18) !important;
-  border-radius: 12px !important;
-  color: #ffffff !important;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.7) !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+  color: #0f172a !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
   padding: 8px 12px !important;
 }
 
-.leaflet-tooltip-top:before {
-  border-top-color: rgba(15, 23, 42, 0.96) !important;
-}
-.leaflet-tooltip-bottom:before {
-  border-bottom-color: rgba(15, 23, 42, 0.96) !important;
-}
-.leaflet-tooltip-left:before {
-  border-left-color: rgba(15, 23, 42, 0.96) !important;
-}
-.leaflet-tooltip-right:before {
-  border-right-color: rgba(15, 23, 42, 0.96) !important;
-}
+.leaflet-tooltip-top:before    { border-top-color:    #ffffff !important; }
+.leaflet-tooltip-bottom:before { border-bottom-color: #ffffff !important; }
+.leaflet-tooltip-left:before   { border-left-color:   #ffffff !important; }
+.leaflet-tooltip-right:before  { border-right-color:  #ffffff !important; }
 
-/* Pulsing animated node rings */
-@keyframes ping-slow {
-  0% {
-    transform: scale(0.95);
-    opacity: 0.8;
-  }
-  70% {
-    transform: scale(2.2);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(2.4);
-    opacity: 0;
-  }
-}
-
-.node-pulse-ring {
-  position: absolute;
-  top: -6px;
-  left: -6px;
-  right: -6px;
-  bottom: -6px;
-  border-radius: 9999px;
-  animation: ping-slow 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+.leaflet-control-attribution {
+  background: rgba(255, 255, 255, 0.85) !important;
+  color: #94a3b8 !important;
+  font-size: 10px !important;
+  border-radius: 6px !important;
+  padding: 2px 6px !important;
 }
